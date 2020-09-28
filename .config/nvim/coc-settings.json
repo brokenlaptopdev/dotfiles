@@ -1,0 +1,17 @@
+{
+  "coc.preferences.formatOnType": false,
+  "coc.preferences.formatOnSaveFiletypes": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact"
+  ],
+  "rust-analyzer.updates.channel": "nightly",
+  "eslint.autoFixOnSave": true,
+  "eslint.filetypes": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "tsserver.npm": "/Users/aa/.npm-global/bin/npm",
+  "tsserver.formatOnType": true,
+  "prettier.disableSuccessMessage": true,
+  "prettier.printWidth": 160,
+  "prettier.singleQuote": true
+}
