@@ -1,0 +1,85 @@
+
+# enable plugin manager
+source "%val{config}/plugins/plug.kak/rc/plug.kak"
+plug "robertmeta/plug.kak" noload
+
+plug "brokenlaptopdev/fzf.kak" config %{
+    map -docstring 'fzf mode' global user 'f' ': fzf-mode<ret>'
+}
+
+plug "andreyorst/smarttab.kak" defer smarttab %{
+    # when backspace is pressed, 2 spaces deleted
+    set-option global softtabstop 2
+} config %{
+    hook global WinSetOption filetype=(rust|dart|javascript|typescript|kak|markdown|sh) expandtab
+}
+
+plug "alexherbo2/prelude.kak"
+plug "alexherbo2/auto-pairs.kak" %{
+    require-module prelude
+    require-module auto-pairs
+    auto-pairs-enable
+}
+
+plug "kak-lsp/kak-lsp" do %{
+    cargo install --locked --force --path .
+} config %{
+    # debugging
+    #eval %sh{echo ${kak_opt_lsp_cmd} >> /tmp/kak-lsp.log}
+    #set global lsp_cmd "kak-lsp -s %val{session} -vvv -log /tmp/kak-lsp.log"
+
+    #set-option global lsp_completion_trigger "execute-keys 'h<a-h><a-k>\S[^\h\n,=;*(){}\[\]]\z<ret>'"
+    set global lsp_diagnostic_line_error_sign '║'
+    set global lsp_diagnostic_line_warning_sign '┊'
+
+    define-command ne -docstring 'go to next error/warning from lsp' %{ lsp-find-error --include-warnings }
+    define-command pe -docstring 'go to previous error/warning from lsp' %{ lsp-find-error --previous --include-warnings }
+    define-command ee -docstring 'go to current error/warning from lsp' %{ lsp-find-error --include-warnings; lsp-find-error --previous --include-warnings }
+
+    define-command lsp-restart -docstring 'restart LSP server' %{ lsp-stop; lsp-start }
+
+    hook global WinSetOption filetype=(rust|dart|javascript|typescript|c|cpp|cc) %{
+        map window user "l" ": enter-user-mode lsp<ret>" -docstring "LSP mode"
+
+        lsp-enable-window
+        lsp-auto-hover-enable
+        lsp-auto-hover-insert-mode-disable
+
+        set-option window lsp_auto_highlight_references true
+        set-option window lsp_hover_anchor true
+    }
+
+    hook global WinSetOption filetype=(rust) %{
+        # clippy
+        set window lsp_server_configuration rust.clippy_preference="on"
+
+        # inlay hints
+        hook window -group rust-inlay-hints BufReload .* rust-analyzer-inlay-hints
+        hook window -group rust-inlay-hints NormalIdle .* rust-analyzer-inlay-hints
+        hook window -group rust-inlay-hints InsertIdle .* rust-analyzer-inlay-hints
+        hook -once -always window WinSetOption filetype=.* %{
+            remove-hooks window rust-inlay-hints
+        }
+    }
+
+    hook global KakEnd .* lsp-exit
+}
+
+#set-option global makecmd 'make -j8'
+set-option global grepcmd 'ag --column'
+set-option global ui_options terminal_status_on_top=true
+set global indentwidth 2
+
+map global user 'w' ': w<ret>' -docstring 'write'
+
+hook global InsertCompletionShow .* %{
+    try %{
+        execute-keys -draft 'h<a-K>\h<ret>'
+        map window insert <tab> <c-n>
+        map window insert <s-tab> <c-p>
+    }
+}
+hook global InsertCompletionHide .* %{
+    unmap window insert <tab> <c-n>
+    unmap window insert <s-tab> <c-p>
+}
