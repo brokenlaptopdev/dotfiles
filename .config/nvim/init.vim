@@ -58,7 +58,7 @@ nmap <leader>o :NERDTreeToggle<CR>
 
 " easy saving
 nmap <leader>u :update<CR>
-nmap <leader>f :FZF<CR>
+nmap <leader>z :FZF<CR>
 
 " cd into current directory
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>

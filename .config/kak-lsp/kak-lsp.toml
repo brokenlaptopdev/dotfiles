@@ -44,7 +44,6 @@ filetypes = ["dart"]
 roots = ["pubspec.yaml", ".git"]
 command = "sh"
 args = ["-c", "dart /usr/local/opt/dart/libexec/bin/snapshots/analysis_server.dart.snapshot --lsp"]
-offset_encoding = "utf-8"
 
 [language.javascript]
 filetypes = ["javascript"]
@@ -63,3 +62,7 @@ filetypes = ["rust"]
 roots = ["Cargo.toml"]
 command = "rust-analyzer"
 offset_encoding = "utf-8"
+
+#[language.swift]
+#filetypes = ["swift"]
+#command = "sourcekit-lsp"
