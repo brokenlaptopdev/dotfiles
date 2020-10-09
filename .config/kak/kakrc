@@ -27,7 +27,7 @@ plug "kak-lsp/kak-lsp" do %{
         lsp-enable-window
         lsp-auto-hover-enable
         lsp-auto-hover-insert-mode-enable
-        set-option window lsp_hover_anchor true
+        set-option window lsp_hover_anchor false
         set-face window DiagnosticError default+u
         set-face window DiagnosticWarning default+u
     }
@@ -45,10 +45,12 @@ plug "kak-lsp/kak-lsp" do %{
     hook global KakEnd .* lsp-exit
 }
 
-plug "brokenlaptopdev/fzf.kak" config %{
+plug "brokenlaptopdev/fzf.kak" defer fzf %{
+  set global fzf_use_main_selection false
+  set global fzf_file_command 'rg -S'
+} config %{
   map -docstring 'fzf mode' global user 'f' ': fzf-mode<ret>'
 }
-
 plug "andreyorst/smarttab.kak" defer smarttab %{
   # when backspace is pressed, 2 spaces deleted
   set-option global softtabstop 2
@@ -72,8 +74,9 @@ plug "brokenlaptopdev/kakoune-surround" config %{
   map global user 's' ':enter-user-mode surround<ret>' -docstring 'surround mode'
 }
 
-colorscheme rosegold
+colorscheme github
 
+set-option global grepcmd 'rg -S'
 set global indentwidth 2
 
 hook global InsertCompletionShow .* %{
