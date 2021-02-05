@@ -1,7 +1,7 @@
 " plugins
 call plug#begin()
 
-Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neoclide/coc.nvim', {'branch': 'master', 'do': 'yarn install --frozen-lockfile'}
 Plug 'preservim/nerdtree'
 Plug 'dart-lang/dart-vim-plugin'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
@@ -11,9 +11,7 @@ Plug 'sainnhe/sonokai'
 Plug 'keith/swift.vim'
 
 Plug 'pangloss/vim-javascript'
-Plug 'leafgarland/typescript-vim'
 Plug 'peitalin/vim-jsx-typescript'
-Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
 Plug 'jparise/vim-graphql'
 
 Plug 'alvan/vim-closetag'
@@ -26,13 +24,52 @@ Plug 'itchyny/lightline.vim'
 Plug 'arcticicestudio/nord-vim'
 Plug 'unblevable/quick-scope'
 
+Plug 'leafOfTree/vim-svelte-plugin'
+Plug 'HerringtonDarkholme/yats.vim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+
+Plug 'sbdchd/neoformat'
+
+Plug 'liuchengxu/vim-which-key'
+
+
+" remap leader (backslash) to comma, and comma to backslash
+let mapleader = ','
+let maplocalleader = ','
+nnoremap \ ,
+" vim-which-key
+nnoremap <silent> <leader> :WhichKey ','<CR>
+set timeoutlen=500
+
+let g:neoformat_svelte_npxprettier = {
+	\ 'exe': 'npx',
+	\ 'args': ['prettier', '--stdin-filepath', '--plugin-search-dir=.', '%:p'],
+	\ 'stdin': 1
+  \ }
+let g:neoformat_enabled_svelte = ['npxprettier']
+augroup mySvelte
+	au!
+	autocmd FileType svelte
+		\ nmap <buffer> <LocalLeader>nf :Neoformat<CR>
+augroup END
+
+" augroup fmt
+"   autocmd!
+"   autocmd BufWritePre *.svelte undojoin | Neoformat
+" augroup END
+
+" Prettier Settings
+"let g:prettier#quickfix_enabled = 0
+"let g:prettier#autoformat_require_pragma = 0
+"au BufWritePre *.css,*.svelte,*.pcss,*.html,*.ts,*.js,*.tsx,*.jsx,*.json PrettierAsync
+
 call plug#end()
 
 " enables syntax highlighting
 syntax enable
 
 " indentation
-set tabstop=2 softtabstop=2 shiftwidth=2 expandtab autoindent
+set tabstop=2 softtabstop=2 shiftwidth=2 noexpandtab autoindent
 
 " better search
 set incsearch ignorecase smartcase 
@@ -58,13 +95,14 @@ nmap <leader>o :NERDTreeToggle<CR>
 
 " easy saving
 nmap <leader>u :update<CR>
-nmap <leader>z :FZF<CR>
+nmap <leader>ff :FZF<CR>
+nmap <leader>fg :Rg<CR>
 
 " cd into current directory
 nnoremap <leader>cd :cd %:p:h<CR>:pwd<CR>
 
 " gruvbox
-" autocmd vimenter * colorscheme gruvbox
+"autocmd vimenter * colorscheme gruvbox
 set background=dark
 let g:gruvbox_material_background = 'medium'
 
@@ -85,16 +123,21 @@ autocmd BufNewFile,BufRead *.swift set filetype=swift
 let g:dartfmt_options = ['--line-length 300', '--dry-run']
 let g:dart_style_guide = 2
 
+" svelte
+let g:vim_svelte_plugin_load_full_syntax = 1
+let g:vim_svelte_plugin_use_typescript = 1
+let g:vim_svelte_plugin_use_foldexpr = 0
+autocmd FileType svelte let b:coc_pairs_disabled = ['<']
 
 " easier term exit
-tnoremap <leader><Esc> <C-\><C-n>
+tnoremap <leader>c <C-\><C-n>
 
 " typescript / react
 autocmd BufEnter *.{js,jsx,ts,tsx} :syntax sync fromstart
 autocmd BufLeave *.{js,jsx,ts,tsx} :syntax sync clear
 
-let g:closetag_filenames = '*.html,*.xhtml,*.jsx,*.tsx'
-let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.tsx'
+let g:closetag_filenames = '*.html,*.xhtml,*.jsx,*.tsx,*.svelte'
+let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.tsx,*.svelte'
 let g:closetag_emptyTags_caseSensitive = 1
 let g:closetag_regions = {
     \ 'typescript.tsx': 'jsxRegion,tsxRegion',
@@ -198,8 +241,8 @@ autocmd CursorHold * silent call CocActionAsync('highlight')
 nmap <leader>rn <Plug>(coc-rename)
 
 " Formatting selected code.
-xmap <leader>f  <Plug>(coc-format-selected)
-nmap <leader>f  <Plug>(coc-format-selected)
+"xmap <leader>f  <Plug>(coc-format-selected)
+"nmap <leader>f  <Plug>(coc-format-selected)
 
 augroup mygroup
   autocmd!

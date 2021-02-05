@@ -43,7 +43,7 @@ timeout = 1800 # seconds = 30 minutes
 filetypes = ["dart"]
 roots = ["pubspec.yaml", ".git"]
 command = "sh"
-args = ["-c", "dart /usr/local/opt/dart/libexec/bin/snapshots/analysis_server.dart.snapshot --lsp"]
+args = ["-c", "dart /usr/local/opt/dart-beta/libexec/bin/snapshots/analysis_server.dart.snapshot --lsp"]
 
 [language.javascript]
 filetypes = ["javascript"]
@@ -62,6 +62,10 @@ filetypes = ["rust"]
 roots = ["Cargo.toml"]
 command = "rust-analyzer"
 offset_encoding = "utf-8"
+
+[language.rust.initialization_options]
+cargo.loadOutDirsFromCheck = true
+procMacro.enable = true
 
 #[language.swift]
 #filetypes = ["swift"]

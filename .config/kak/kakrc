@@ -2,6 +2,8 @@
 source "%val{config}/plugins/plug.kak/rc/plug.kak"
 plug "robertmeta/plug.kak" noload
 
+plug "schemar/kak-jsts"
+
 plug "kak-lsp/kak-lsp" do %{
     cargo build --release --locked
     cargo install --force --path .
@@ -27,35 +29,42 @@ plug "kak-lsp/kak-lsp" do %{
         lsp-enable-window
         lsp-auto-hover-enable
         lsp-auto-hover-insert-mode-enable
-        set-option window lsp_hover_anchor false
+        set-option window lsp_hover_anchor true
         set-face window DiagnosticError default+u
         set-face window DiagnosticWarning default+u
     }
     hook global WinSetOption filetype=rust %{
         set-option window lsp_server_configuration rust.clippy_preference="on"
+        #set-option window lsp_server_configuration rust-analyzer.cargo.loadOutDirsFromCheck=true
+        #set-option window lsp_server_configuration rust-analyzer.procMacro.enable=true
 
         # inlay hints
     	hook window -group rust-inlay-hints BufReload .* rust-analyzer-inlay-hints
     	hook window -group rust-inlay-hints NormalIdle .* rust-analyzer-inlay-hints
     	hook window -group rust-inlay-hints InsertIdle .* rust-analyzer-inlay-hints
     	hook -once -always window WinSetOption filetype=.* %{
-     		remove-hooks window rust-inlay-hints
+     	    remove-hooks window rust-inlay-hints
     	}
+      #set global indentwidth 4
+      set global tabstop 4
     }
     hook global KakEnd .* lsp-exit
 }
 
 plug "brokenlaptopdev/fzf.kak" defer fzf %{
   set global fzf_use_main_selection false
-  set global fzf_file_command 'rg -S'
+  #set global fzf_grep_command 'rg -S'
 } config %{
   map -docstring 'fzf mode' global user 'f' ': fzf-mode<ret>'
 }
 plug "andreyorst/smarttab.kak" defer smarttab %{
   # when backspace is pressed, 2 spaces deleted
-  set-option global softtabstop 2
+  #set-option global softtabstop 2
 } config %{
-  hook global WinSetOption filetype=(rust|dart|javascript|typescript|kak|markdown|sh) expandtab
+  hook global WinSetOption filetype=(rust|dart|javascript|typescript|kak|markdown|sh) noexpandtab
+  hook global WinSetOption filetype=rust %{
+    #set-option global softtabstop 4
+  }
 }
 
 plug "alexherbo2/prelude.kak"
@@ -74,10 +83,11 @@ plug "brokenlaptopdev/kakoune-surround" config %{
   map global user 's' ':enter-user-mode surround<ret>' -docstring 'surround mode'
 }
 
-colorscheme github
+colorscheme gruvbox
 
 set-option global grepcmd 'rg -S'
-set global indentwidth 2
+set global indentwidth 0
+set global tabstop 2
 
 hook global InsertCompletionShow .* %{
     try %{
@@ -91,3 +101,4 @@ hook global InsertCompletionHide .* %{
   unmap window insert <tab> <c-n>
   unmap window insert <s-tab> <c-p>
 }
+

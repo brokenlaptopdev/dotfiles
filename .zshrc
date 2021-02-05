@@ -11,6 +11,7 @@ export PATH=$PATH:/Users/aa/tools/depot_tools
 export PATH=$PATH:/Users/aa/bin
 export PATH=$PATH:$HOME/.local/bin
 export PATH=$PATH:/Applications/Postgres.app/Contents/Versions/latest/bin
+export LIBRARY_PATH="$LIBRARY_PATH:/usr/local/lib"
 
 # Go development
 export GOPATH="${HOME}/.go"
@@ -26,6 +27,8 @@ source ~/custom_commands.sh
 
 export UREPP="/Volumes/ProSSD/URepp"
 export URFLUTTER="$UREPP/repos/urepp_flutter"
+
+export FLUTTER_ROOT="/Users/aa/flutter"
 
 bindkey -v
 
